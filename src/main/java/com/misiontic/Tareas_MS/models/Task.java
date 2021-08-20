@@ -7,17 +7,20 @@ public class Task {
     @Id
     private String id;
     private String titleTask;
+    private String categoryTask;
     private String description;
     private Date finalDate;
     private String status;
-    private String categoryTask;
+    private String userId;
 
-    public Task(String id, String titleTask, Date finalDate, String status, String categoryTask) {
+    public Task(String id, String titleTask, String categoryTask, String description, Date finalDate, String status, String userId) {
         this.id = id;
         this.titleTask = titleTask;
+        this.categoryTask = categoryTask;
+        this.description = description;
         this.finalDate = finalDate;
         this.status = status;
-        this.categoryTask = categoryTask;
+        this.userId = userId;
     }
 
     public String getId() {
@@ -34,6 +37,14 @@ public class Task {
 
     public void setTitleTask(String titleTask) {
         this.titleTask = titleTask;
+    }
+
+    public String getCategoryTask() {
+        return categoryTask;
+    }
+
+    public void setCategoryTask(String categoryTask) {
+        this.categoryTask = categoryTask;
     }
 
     public String getDescription() {
@@ -60,11 +71,11 @@ public class Task {
         this.status = status;
     }
 
-    public String getCategoryTask() {
-        return categoryTask;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setCategoryTask(String categoryTask) {
-        this.categoryTask = categoryTask;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

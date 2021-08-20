@@ -4,13 +4,22 @@ import org.springframework.data.annotation.Id;
 
 public class Category {
     @Id
+    private String id;
     private String categoryName;
     private String color;
 
-
-    public Category(String categoryName, String color) {
+    public Category(String id, String categoryName, String color) {
+        this.id = id;
         this.categoryName = categoryName;
         this.color = color;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getCategoryName() {
