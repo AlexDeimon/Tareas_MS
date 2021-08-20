@@ -7,11 +7,13 @@ public class Category {
     private String id;
     private String categoryName;
     private String color;
+    private String userId;
 
-    public Category(String id, String categoryName, String color) {
+    public Category(String id, String categoryName, String color, String userId) {
         this.id = id;
         this.categoryName = categoryName;
         this.color = color;
+        this.userId = userId;
     }
 
     public String getId() {
@@ -36,5 +38,13 @@ public class Category {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
