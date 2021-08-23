@@ -18,7 +18,7 @@ public class AccountController {
     Account postAccount(@RequestBody Account account){
         Account newAccount = accountRepository.findById(account.getUserId()).orElse(null);
         if(newAccount != null){
-            throw new AccountAlreadyExistsException("Ya existe una cuenta con userid: "+newAccount.getUserId());
+            throw new AccountAlreadyExistsException("Ya existe una cuenta con userid: "+ account.getUserId());
         }
 
         return accountRepository.save(account);

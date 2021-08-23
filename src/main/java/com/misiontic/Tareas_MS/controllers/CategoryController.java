@@ -21,15 +21,15 @@ public class CategoryController {
         List<Category> newCategory = categoryRepository.findByNameAndUser(category.getCategoryName(), category.getUserId());
 
         if(newCategory.size() > 0){
-            throw new DuplicatedCategoryNameException("Ya existe una categoria con el nombre: " + newCategory.get(0).getCategoryName()
-                    + " creada por el usuario: " + newCategory.get(0).getUserId());
+            throw new DuplicatedCategoryNameException("Ya existe una categoria con el nombre: " + category.getCategoryName()
+                    + " creada por el usuario: " + category.getUserId());
         }
 
         return categoryRepository.save(category);
     }
 
     @DeleteMapping("delete/{categoryId}")
-    String deleteTask(@PathVariable String categoryId){
+    String deleteCategory(@PathVariable String categoryId){
 
         Category categoryToDelete = categoryRepository.findById(categoryId).orElse(null);
 
