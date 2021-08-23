@@ -1,70 +1,87 @@
 package com.misiontic.Tareas_MS.controllers;
 
-import com.misiontic.Tareas_MS.exceptions.DuplicatedCategoryNameException;
+import com.misiontic.Tareas_MS.exceptions.CategoryNotFoundException;
 import com.misiontic.Tareas_MS.exceptions.DuplicatedTaskNameException;
 import com.misiontic.Tareas_MS.exceptions.TaskNotFoundException;
 import com.misiontic.Tareas_MS.models.Task;
+import com.misiontic.Tareas_MS.models.Category;
+import com.misiontic.Tareas_MS.repositories.CategoryRepository;
 import com.misiontic.Tareas_MS.repositories.TaskRepository;
 import com.misiontic.Tareas_MS.repositories.AccountRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 
 @RestController
 public class TaskController {
     private final AccountRepository accountRepository;
     private final TaskRepository taskRepository;
+    private final CategoryRepository categoryRepository;
 
-    public TaskController(AccountRepository accountRepository, TaskRepository taskRepository) {
+    public TaskController(AccountRepository accountRepository, TaskRepository taskRepository, CategoryRepository categoryRepository) {
         this.accountRepository = accountRepository;
         this.taskRepository = taskRepository;
+        this.categoryRepository = categoryRepository;
     }
 
-    @DeleteMapping("delete/{id}")
-    String deleteTask(@PathVariable String Id){
-        Task taskToDelete = taskRepository.findById(Id).orElse(null);
+    @DeleteMapping("delete/{taskId}")
+    String deleteTask(@PathVariable String taskId){
+
+        Task taskToDelete = taskRepository.findById(taskId).orElse(null);
+
         if (taskToDelete == null){
-            throw new TaskNotFoundException("No existe una tarea con el Id: " + Id);
+            throw new TaskNotFoundException("No existe una tarea con el Id: " + taskId);
         }
 
         taskRepository.delete(taskToDelete);
 
         return "Se ha eliminado la tarea";
     }
-    @PostMapping("save/{id}")
-    Task saveTask(@RequestBody Task task){
-        Task newTask = taskRepository.findByUserId(task.getId());
-        if(newTask != null ){
-            throw new DuplicatedTaskNameException("Ya existe una categoria con el nombre: " + newTask.getTitleTask());
+
+    @PostMapping("newTask")
+    Task newTask(@RequestBody Task task){
+        List<Task> newTask = taskRepository.findByUserIdDateAndName(task.getUserId(), task.getFinalDate(), task.getTaskTittle());
+        List<Category> findCategoryTask = categoryRepository.findByNameAndUser(task.getTaskCategory(), task.getUserId());
+        if(newTask.size() > 0){
+            throw new DuplicatedTaskNameException("Ya existe una tarea con el titulo: " + task.getTaskTittle() +
+                    ", en la fecha: " + task.getFinalDate());
         }
-        taskRepository.save(task);
+        if(findCategoryTask.size() == 0){
+            throw new CategoryNotFoundException("No existe la categoria: " + task.getTaskCategory());
+        }
 
         return taskRepository.save(task);
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("update/")
     Task updateTask(@RequestBody Task task) {
-        Task newTask = taskRepository.findByUserId(task.getId());
-        if (newTask != null) {
-             throw new TaskNotFoundException("No se encontro la tarea");
+        Task updateTask = taskRepository.findById(task.getTaskId()).orElse(null);
+        List<Category> findCategoryTask = categoryRepository.findByNameAndUser(task.getTaskCategory(), task.getUserId());
+        if (updateTask == null) {
+             throw new TaskNotFoundException("No existe la tarea con id " + task.getTaskId());
         }
-        task.setTitleTask(task.getTitleTask());
-        task.setDescription(task.getDescription());
-        task.setFinalDate(task.getFinalDate());
-        task.setStatus(task.getStatus());
 
+        if(findCategoryTask.size() == 0){
+            throw new CategoryNotFoundException("No existe la categoria: " + task.getTaskCategory());
+        }
 
-        return taskRepository.save(task);
+        updateTask.setTaskTittle(task.getTaskTittle());
+        updateTask.setDescription(task.getDescription());
+        updateTask.setFinalDate(task.getFinalDate());
+        updateTask.setStatus(task.getStatus());
+
+        return taskRepository.save(updateTask);
     }
 
-    @GetMapping("/{id}/{date}")
+    @GetMapping("/{userId}/{finalDate}")
     List<Task> getTaskList(@PathVariable String userId, Date finalDate) {
         List<Task> List = taskRepository.findByUserIdDate( userId, finalDate);
-
+        if(List.size() == 0){
+            throw new TaskNotFoundException("No hay tareas registradas por el usuario con id: " + userId);
+        }
 
         return List;
     }
