@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 
@@ -27,7 +28,7 @@ public class TaskController {
         this.categoryRepository = categoryRepository;
     }
 
-    @DeleteMapping("delete/{taskId}")
+    @DeleteMapping("deleteTask/{taskId}")
     String deleteTask(@PathVariable String taskId){
 
         Task taskToDelete = taskRepository.findById(taskId).orElse(null);
@@ -43,23 +44,26 @@ public class TaskController {
 
     @PostMapping("newTask")
     Task newTask(@RequestBody Task task){
-        List<Task> newTask = taskRepository.findByUserIdDateAndName(task.getUserId(), task.getFinalDate(), task.getTaskTittle());
-        List<Category> findCategoryTask = categoryRepository.findByNameAndUser(task.getTaskCategory(), task.getUserId());
+        List<Task> newTask = taskRepository.findByUserId(task.getUserId());
+        List<Category> findCategoryName = categoryRepository.findByCategoryName(task.getTaskCategory());
         if(newTask.size() > 0){
-            throw new DuplicatedTaskNameException("Ya existe una tarea con el titulo: " + task.getTaskTittle() +
-                    ", en la fecha: " + task.getFinalDate());
+            for (Task tarea:newTask) {
+                if(tarea.getFinalDate() == task.getFinalDate() && tarea.getTaskTittle().toLowerCase(Locale.ROOT) == task.getTaskTittle().toLowerCase(Locale.ROOT)){
+                    throw new DuplicatedTaskNameException("Ya existe una tarea con el titulo: " + task.getTaskTittle() +
+                            ", en la fecha: " + task.getFinalDate());
+                }
+            }
         }
-        if(findCategoryTask.size() == 0){
+        if(findCategoryName.size() == 0){
             throw new CategoryNotFoundException("No existe la categoria: " + task.getTaskCategory());
         }
-
         return taskRepository.save(task);
     }
 
-    @PutMapping("update/")
+    @PutMapping("updateTask")
     Task updateTask(@RequestBody Task task) {
         Task updateTask = taskRepository.findById(task.getTaskId()).orElse(null);
-        List<Category> findCategoryTask = categoryRepository.findByNameAndUser(task.getTaskCategory(), task.getUserId());
+        List<Category> findCategoryTask = categoryRepository.findByCategoryName(task.getTaskCategory());
         if (updateTask == null) {
              throw new TaskNotFoundException("No existe la tarea con id " + task.getTaskId());
         }
@@ -72,17 +76,24 @@ public class TaskController {
         updateTask.setDescription(task.getDescription());
         updateTask.setFinalDate(task.getFinalDate());
         updateTask.setStatus(task.getStatus());
+        updateTask.setTaskCategory(task.getTaskCategory());
 
         return taskRepository.save(updateTask);
     }
 
-    @GetMapping("/{userId}/{finalDate}")
+    @GetMapping("{userId}/{finalDate}")
     List<Task> getTaskList(@PathVariable String userId, Date finalDate) {
-        List<Task> List = taskRepository.findByUserIdDate( userId, finalDate);
-        if(List.size() == 0){
+        List<Task> TaskList = taskRepository.findByUserId(userId);
+        if(TaskList.size() == 0){
             throw new TaskNotFoundException("No hay tareas registradas por el usuario con id: " + userId);
         }
+        List<Task> taskListByDate = null;
+        for(Task tarea:TaskList){
+            if(tarea.getFinalDate() == finalDate){
+                taskListByDate.add(tarea);
+            }
+        }
 
-        return List;
+        return taskListByDate;
     }
 }

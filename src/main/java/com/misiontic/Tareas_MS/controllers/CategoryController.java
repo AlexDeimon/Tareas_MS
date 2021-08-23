@@ -5,6 +5,8 @@ import com.misiontic.Tareas_MS.exceptions.CategoryNotFoundException;
 import com.misiontic.Tareas_MS.models.Category;
 import com.misiontic.Tareas_MS.repositories.CategoryRepository;
 import java.util.List;
+import java.util.Locale;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,17 +20,19 @@ public class CategoryController {
 
     @PostMapping("newCategory")
     Category postCategory(@RequestBody Category category){
-        List<Category> newCategory = categoryRepository.findByNameAndUser(category.getCategoryName(), category.getUserId());
-
+        List<Category> newCategory = categoryRepository.findByUserId(category.getUserId());
         if(newCategory.size() > 0){
-            throw new DuplicatedCategoryNameException("Ya existe una categoria con el nombre: " + category.getCategoryName()
-                    + " creada por el usuario: " + category.getUserId());
+            for (Category categoria:newCategory) {
+                if(categoria.getCategoryName().toLowerCase(Locale.ROOT) == category.getCategoryName().toLowerCase(Locale.ROOT))
+                    throw new DuplicatedCategoryNameException("Ya existe una categoria " +category.getCategoryName()+
+                            " creada por el usuario: " + category.getUserId());
+            }
         }
 
         return categoryRepository.save(category);
     }
 
-    @DeleteMapping("delete/{categoryId}")
+    @DeleteMapping("deleteCategory/{categoryId}")
     String deleteCategory(@PathVariable String categoryId){
 
         Category categoryToDelete = categoryRepository.findById(categoryId).orElse(null);

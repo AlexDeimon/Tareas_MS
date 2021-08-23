@@ -13,9 +13,10 @@ public class Task {
     private String taskCategory;
     private String userId;
 
-    public Task(String taskId, String taskTittle, Date finalDate, String status, String taskCategory, String userId) {
+    public Task(String taskId, String taskTittle, String description, Date finalDate, String status, String taskCategory, String userId) {
         this.taskId = taskId;
         this.taskTittle = taskTittle;
+        this.description = description;
         this.finalDate = finalDate;
         this.status = status;
         this.taskCategory = taskCategory;
