@@ -23,9 +23,11 @@ public class CategoryController {
         List<Category> newCategory = categoryRepository.findByUserId(category.getUserId());
         if(newCategory.size() > 0){
             for (Category categoria:newCategory) {
-                if(categoria.getCategoryName().toLowerCase(Locale.ROOT) == category.getCategoryName().toLowerCase(Locale.ROOT))
+                if(categoria.getCategoryName().toLowerCase(Locale.ROOT).equals(category.getCategoryName().toLowerCase(Locale.ROOT))) {
                     throw new DuplicatedCategoryNameException("Ya existe una categoria " +category.getCategoryName()+
                             " creada por el usuario: " + category.getUserId());
+                }
+
             }
         }
 

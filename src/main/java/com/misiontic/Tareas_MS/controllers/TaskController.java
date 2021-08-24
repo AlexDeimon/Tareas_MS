@@ -48,13 +48,13 @@ public class TaskController {
         List<Category> findCategoryName = categoryRepository.findByCategoryName(task.getTaskCategory());
         if(newTask.size() > 0){
             for (Task tarea:newTask) {
-                if(tarea.getFinalDate() == task.getFinalDate() && tarea.getTaskTittle().toLowerCase(Locale.ROOT) == task.getTaskTittle().toLowerCase(Locale.ROOT)){
+                if(tarea.getFinalDate().equals(task.getFinalDate())  && tarea.getTaskTittle().toLowerCase(Locale.ROOT).equals(task.getTaskTittle().toLowerCase(Locale.ROOT))){
                     throw new DuplicatedTaskNameException("Ya existe una tarea con el titulo: " + task.getTaskTittle() +
                             ", en la fecha: " + task.getFinalDate());
                 }
             }
         }
-        if(findCategoryName.size() == 0){
+        if(  findCategoryName.size() == 0){
             throw new CategoryNotFoundException("No existe la categoria: " + task.getTaskCategory());
         }
         return taskRepository.save(task);
@@ -72,13 +72,7 @@ public class TaskController {
             throw new CategoryNotFoundException("No existe la categoria: " + task.getTaskCategory());
         }
 
-        updateTask.setTaskTittle(task.getTaskTittle());
-        updateTask.setDescription(task.getDescription());
-        updateTask.setFinalDate(task.getFinalDate());
-        updateTask.setStatus(task.getStatus());
-        updateTask.setTaskCategory(task.getTaskCategory());
-
-        return taskRepository.save(updateTask);
+        return taskRepository.save(task);
     }
 
     @GetMapping("{userId}/{finalDate}")
@@ -87,13 +81,14 @@ public class TaskController {
         if(TaskList.size() == 0){
             throw new TaskNotFoundException("No hay tareas registradas por el usuario con id: " + userId);
         }
-        List<Task> taskListByDate = null;
+
         for(Task tarea:TaskList){
-            if(tarea.getFinalDate() == finalDate){
-                taskListByDate.add(tarea);
+            if(tarea.getFinalDate() != finalDate){
+                TaskList.remove(tarea);
             }
         }
 
-        return taskListByDate;
+
+        return TaskList;
     }
 }
