@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface CategoryRepository extends MongoRepository<Category, String>{
     List<Category> findByUserId(String userId);
-    List<Category> findByCategoryName(String categoryName);
+    List<Category> findByCategoryNameAndUserId(String categoryName, String userId);
 }

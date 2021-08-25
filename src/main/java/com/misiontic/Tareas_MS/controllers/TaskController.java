@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.text.SimpleDateFormat;
 
 
 
@@ -45,7 +46,8 @@ public class TaskController {
     @PostMapping("newTask")
     Task newTask(@RequestBody Task task){
         List<Task> newTask = taskRepository.findByUserId(task.getUserId());
-        List<Category> findCategoryName = categoryRepository.findByCategoryName(task.getTaskCategory());
+        List<Category> findCategoryName = categoryRepository.findByCategoryNameAndUserId(task.getTaskCategory(), task.getUserId());
+
         if(newTask.size() > 0){
             for (Task tarea:newTask) {
                 if(tarea.getFinalDate().equals(task.getFinalDate())  && tarea.getTaskTittle().toLowerCase(Locale.ROOT).equals(task.getTaskTittle().toLowerCase(Locale.ROOT))){
@@ -57,13 +59,14 @@ public class TaskController {
         if(  findCategoryName.size() == 0){
             throw new CategoryNotFoundException("No existe la categoria: " + task.getTaskCategory());
         }
+
         return taskRepository.save(task);
     }
 
     @PutMapping("updateTask")
     Task updateTask(@RequestBody Task task) {
         Task updateTask = taskRepository.findById(task.getTaskId()).orElse(null);
-        List<Category> findCategoryTask = categoryRepository.findByCategoryName(task.getTaskCategory());
+        List<Category> findCategoryTask = categoryRepository.findByCategoryNameAndUserId(task.getTaskCategory(), task.getUserId());
         if (updateTask == null) {
              throw new TaskNotFoundException("No existe la tarea con id " + task.getTaskId());
         }
