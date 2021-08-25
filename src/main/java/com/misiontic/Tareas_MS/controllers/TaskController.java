@@ -7,35 +7,34 @@ import com.misiontic.Tareas_MS.models.Task;
 import com.misiontic.Tareas_MS.models.Category;
 import com.misiontic.Tareas_MS.repositories.CategoryRepository;
 import com.misiontic.Tareas_MS.repositories.TaskRepository;
-import com.misiontic.Tareas_MS.repositories.AccountRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.text.SimpleDateFormat;
 
 
 
 @RestController
 public class TaskController {
-    private final AccountRepository accountRepository;
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
 
-    public TaskController(AccountRepository accountRepository, TaskRepository taskRepository, CategoryRepository categoryRepository) {
-        this.accountRepository = accountRepository;
+    public TaskController(TaskRepository taskRepository, CategoryRepository categoryRepository) {
         this.taskRepository = taskRepository;
         this.categoryRepository = categoryRepository;
     }
 
-    @DeleteMapping("deleteTask/{taskId}")
-    String deleteTask(@PathVariable String taskId){
+    @DeleteMapping("deleteTask/{userId}/{taskTittle}")
+    String deleteTask(@PathVariable String userId, @PathVariable String taskTittle){
 
-        Task taskToDelete = taskRepository.findById(taskId).orElse(null);
+        Task taskToDelete = taskRepository.findByUserIdAndTaskTittle(userId,taskTittle);
 
         if (taskToDelete == null){
-            throw new TaskNotFoundException("No existe una tarea con el Id: " + taskId);
+            throw new TaskNotFoundException("No existe una tarea: " + taskTittle + ", creada por el usuario: " + userId);
         }
 
         taskRepository.delete(taskToDelete);
@@ -63,6 +62,17 @@ public class TaskController {
         return taskRepository.save(task);
     }
 
+    @GetMapping("getTask/{userId}/{taskTittle}")
+    Task getTask(@PathVariable String userId, @PathVariable String taskTittle){
+        Task task = taskRepository.findByUserIdAndTaskTittle(userId,taskTittle);
+
+        if (task == null){
+            throw new TaskNotFoundException("No existe una tarea: " + taskTittle + ", creada por el usuario: " + userId);
+        }
+
+        return task;
+    }
+
     @PutMapping("updateTask")
     Task updateTask(@RequestBody Task task) {
         Task updateTask = taskRepository.findById(task.getTaskId()).orElse(null);
@@ -79,18 +89,18 @@ public class TaskController {
     }
 
     @GetMapping("{userId}/{finalDate}")
-    List<Task> getTaskList(@PathVariable String userId, Date finalDate) {
+    List<Task> getTaskList(@PathVariable String userId , @PathVariable String finalDate) {
         List<Task> TaskList = taskRepository.findByUserId(userId);
         if(TaskList.size() == 0){
             throw new TaskNotFoundException("No hay tareas registradas por el usuario con id: " + userId);
         }
-
-        for(Task tarea:TaskList){
-            if(tarea.getFinalDate() != finalDate){
-                TaskList.remove(tarea);
-            }
+        try{
+            DateFormat fechaHora = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date fecha = fechaHora.parse(finalDate);
+            TaskList.removeIf(tarea -> tarea.getFinalDate().equals(fecha));
+        }catch (ParseException e) {
+            System.out.println("Error: " + e.getMessage());
         }
-
 
         return TaskList;
     }

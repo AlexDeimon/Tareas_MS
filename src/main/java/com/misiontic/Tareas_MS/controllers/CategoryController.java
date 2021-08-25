@@ -34,13 +34,13 @@ public class CategoryController {
         return categoryRepository.save(category);
     }
 
-    @DeleteMapping("deleteCategory/{categoryId}")
-    String deleteCategory(@PathVariable String categoryId){
+    @DeleteMapping("deleteCategory/{userId}/{categoryName}")
+    String deleteCategory(@PathVariable String userId, @PathVariable String categoryName){
 
-        Category categoryToDelete = categoryRepository.findById(categoryId).orElse(null);
+        Category categoryToDelete = categoryRepository.findByUserIdAndCategoryName(userId, categoryName);
 
         if (categoryToDelete == null){
-            throw new CategoryNotFoundException("No existe una categoria con el Id: " + categoryId);
+            throw new CategoryNotFoundException("No existe una categoria: " + categoryName + ", creada por el usuario: " + userId);
         }
 
         categoryRepository.delete(categoryToDelete);
