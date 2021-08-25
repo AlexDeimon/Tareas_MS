@@ -1,19 +1,18 @@
 package com.misiontic.Tareas_MS.models;
 
 import org.springframework.data.annotation.Id;
-import java.util.Date;
 
 public class Task {
     @Id
     private String taskId;
     private String taskTittle;
     private String description;
-    private Date finalDate;
+    private String finalDate;
     private String status;
     private String taskCategory;
     private String userId;
 
-    public Task(String taskId, String taskTittle, String description, Date finalDate, String status, String taskCategory, String userId) {
+    public Task(String taskId, String taskTittle, String description, String finalDate, String status, String taskCategory, String userId) {
         this.taskId = taskId;
         this.taskTittle = taskTittle;
         this.description = description;
@@ -47,11 +46,11 @@ public class Task {
         this.description = description;
     }
 
-    public Date getFinalDate() {
+    public String getFinalDate() {
         return finalDate;
     }
 
-    public void setFinalDate(Date finalDate) {
+    public void setFinalDate(String finalDate) {
         this.finalDate = finalDate;
     }
 

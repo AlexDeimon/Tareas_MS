@@ -9,14 +9,8 @@ import com.misiontic.Tareas_MS.repositories.CategoryRepository;
 import com.misiontic.Tareas_MS.repositories.TaskRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-
 
 @RestController
 public class TaskController {
@@ -90,16 +84,9 @@ public class TaskController {
 
     @GetMapping("{userId}/{finalDate}")
     List<Task> getTaskList(@PathVariable String userId , @PathVariable String finalDate) {
-        List<Task> TaskList = taskRepository.findByUserId(userId);
+        List<Task> TaskList = taskRepository.findByUserIdAndFinalDate(userId, finalDate);
         if(TaskList.size() == 0){
-            throw new TaskNotFoundException("No hay tareas registradas por el usuario con id: " + userId);
-        }
-        try{
-            DateFormat fechaHora = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            Date fecha = fechaHora.parse(finalDate);
-            TaskList.removeIf(tarea -> tarea.getFinalDate().equals(fecha));
-        }catch (ParseException e) {
-            System.out.println("Error: " + e.getMessage());
+            throw new TaskNotFoundException("No hay tareas registradas por el usuario con id: " + userId + " en la fecha: " + finalDate);
         }
 
         return TaskList;
