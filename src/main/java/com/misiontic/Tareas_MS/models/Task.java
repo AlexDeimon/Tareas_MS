@@ -1,50 +1,41 @@
 package com.misiontic.Tareas_MS.models;
 
 import org.springframework.data.annotation.Id;
-import java.util.Date;
 
 public class Task {
     @Id
-    private String id;
-    private String titleTask;
-    private String categoryTask;
+    private String taskId;
+    private String taskTittle;
     private String description;
-    private Date finalDate;
+    private String finalDate;
     private String status;
+    private String taskCategory;
     private String userId;
 
-    public Task(String id, String titleTask, String categoryTask, String description, Date finalDate, String status, String userId) {
-        this.id = id;
-        this.titleTask = titleTask;
-        this.categoryTask = categoryTask;
+    public Task(String taskId, String taskTittle, String description, String finalDate, String status, String taskCategory, String userId) {
+        this.taskId = taskId;
+        this.taskTittle = taskTittle;
         this.description = description;
         this.finalDate = finalDate;
         this.status = status;
+        this.taskCategory = taskCategory;
         this.userId = userId;
     }
 
-    public String getId() {
-        return id;
+    public String getTaskId() {
+        return taskId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
-    public String getTitleTask() {
-        return titleTask;
+    public String getTaskTittle() {
+        return taskTittle;
     }
 
-    public void setTitleTask(String titleTask) {
-        this.titleTask = titleTask;
-    }
-
-    public String getCategoryTask() {
-        return categoryTask;
-    }
-
-    public void setCategoryTask(String categoryTask) {
-        this.categoryTask = categoryTask;
+    public void setTaskTittle(String taskTittle) {
+        this.taskTittle = taskTittle;
     }
 
     public String getDescription() {
@@ -55,11 +46,11 @@ public class Task {
         this.description = description;
     }
 
-    public Date getFinalDate() {
+    public String getFinalDate() {
         return finalDate;
     }
 
-    public void setFinalDate(Date finalDate) {
+    public void setFinalDate(String finalDate) {
         this.finalDate = finalDate;
     }
 
@@ -71,11 +62,15 @@ public class Task {
         this.status = status;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getTaskCategory() {
+        return taskCategory;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setTaskCategory(String taskCategory) {
+        this.taskCategory = taskCategory;
     }
+
+    public String getUserId() {return userId; }
+
+    public void setUserId(String userId) { this.userId = userId; }
 }
