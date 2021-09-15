@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -41,12 +40,8 @@ public class TaskController {
         List <Task> newTask = taskRepository.findByUserId(task.getUserId());
         List<Category> findCategoryName = categoryRepository.findByCategoryNameAndUserId(task.getTaskCategory(), task.getUserId());
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
         String strDate = formatter.format(task.getTaskDate());
-        c.setTime(formatter.parse(strDate));
-        c.add(Calendar.DAY_OF_MONTH, 1);
-        String newDate = formatter.format(c.getTime());
-        Date date1=new SimpleDateFormat("yyyy-MM-dd").parse(newDate);
+        Date date1=new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
         task.setTaskDate(date1);
         if(newTask.size() > 0){
             for (Task tarea:newTask) {
@@ -81,12 +76,8 @@ public class TaskController {
             throw new CategoryNotFoundException("No existe la categoria: " + task.getTaskCategory());
         }
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
         String strDate = formatter.format(task.getTaskDate());
-        c.setTime(formatter.parse(strDate));
-        c.add(Calendar.DAY_OF_MONTH, 1);
-        String newDate = formatter.format(c.getTime());
-        Date date1=new SimpleDateFormat("yyyy-MM-dd").parse(newDate);
+        Date date1=new SimpleDateFormat("yyyy-MM-dd").parse(strDate);
         updateTask.setTaskTittle(task.getTaskTittle());
         updateTask.setTaskCategory(task.getTaskCategory());
         updateTask.setTaskDescription(task.getTaskDescription());
