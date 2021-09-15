@@ -5,20 +5,32 @@ import org.springframework.data.annotation.Id;
 public class Category {
     @Id
     private String categoryId;
-    private String categoryName;
-    private String color;
     private String userId;
+    private String categoryName;
+    private String categoryColor;
 
-    public Category(String categoryId, String categoryName, String color, String userId) {
+    public Category(String categoryId, String userId, String categoryName, String categoryColor) {
         this.categoryId = categoryId;
-        this.categoryName = categoryName;
-        this.color = color;
         this.userId = userId;
+        this.categoryName = categoryName;
+        this.categoryColor = categoryColor;
     }
 
-    public String getCategoryId() { return categoryId; }
+    public String getCategoryId() {
+        return categoryId;
+    }
 
-    public void setCategoryId(String categoryId) { this.categoryId = categoryId; }
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public  String getUserId() {
+        return  userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getCategoryName() {
         return categoryName;
@@ -28,15 +40,11 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public String getColor() {
-        return color;
+    public String getCategoryColor() {
+        return categoryColor;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setCategoryColor(String categoryColor) {
+        this.categoryColor = categoryColor;
     }
-
-    public  String getUserId() { return  userId; }
-
-    public void setUserId(String userId) { this.userId = userId; }
 }

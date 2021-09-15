@@ -18,33 +18,27 @@ public class CategoryController {
         this.categoryRepository = categoryRepository;
     }
 
-    @PostMapping("newCategory")
+    @PostMapping("/newCategory")
     Category postCategory(@RequestBody Category category){
-        List<Category> newCategory = categoryRepository.findByUserId(category.getUserId());
-        if(newCategory.size() > 0){
-            for (Category categoria:newCategory) {
-                if(categoria.getCategoryName().toLowerCase(Locale.ROOT).equals(category.getCategoryName().toLowerCase(Locale.ROOT))) {
+        List <Category> newCategory = categoryRepository.findByUserId(category.getUserId());
+        if(newCategory.size() > 0 ){
+            for (Category categoria:newCategory){
+                if (categoria.getCategoryName().toLowerCase(Locale.ROOT).equals(category.getCategoryName().toLowerCase(Locale.ROOT))) {
                     throw new DuplicatedCategoryNameException("Ya existe una categoria " +category.getCategoryName()+
                             " creada por el usuario: " + category.getUserId());
                 }
-
             }
         }
-
         return categoryRepository.save(category);
     }
 
-    @DeleteMapping("deleteCategory/{userId}/{categoryName}")
+    @DeleteMapping("/deleteCategory/{userId}/{categoryName}")
     String deleteCategory(@PathVariable String userId, @PathVariable String categoryName){
-
         Category categoryToDelete = categoryRepository.findByUserIdAndCategoryName(userId, categoryName);
-
         if (categoryToDelete == null){
             throw new CategoryNotFoundException("No existe una categoria: " + categoryName + ", creada por el usuario: " + userId);
         }
-
         categoryRepository.delete(categoryToDelete);
-
         return "Se ha eliminado la categoria";
     }
 

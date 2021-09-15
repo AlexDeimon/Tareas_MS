@@ -5,11 +5,9 @@ import org.springframework.data.annotation.Id;
 public class Account {
     @Id
     private String userId;
-    private String userName;
 
-    public Account(String userId, String userName) {
+    public Account(String userId) {
         this.userId = userId;
-        this.userName = userName;
     }
 
     public String getUserId() {
@@ -19,5 +17,4 @@ public class Account {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
 }
